@@ -1,0 +1,8 @@
+{
+	"servers": {
+		"nuxt-docs": {
+			"type": "http",
+			"url": "https://mcp.nuxt.com/sse"
+		}
+	}
+}

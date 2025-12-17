@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+  
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  a, button {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+  }
+}
+
+html {
+  @apply bg-white;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  transition: background-color 0.3s ease;
+}
+html.dark {
+  @apply bg-slate-900;
+}
+
+.flexx {
+  @apply flex items-center justify-center;
+}
+
+.scroll-offset {
+  scroll-margin-top: 20px;
+}
+
+.ptitle {
+  /* @apply text-4xl mb-6 font-semibold text-gray-800 dark:text-slate-100 text-center; */
+}
+
+li::marker {
+  /* @apply text-pink-500; */
+}
