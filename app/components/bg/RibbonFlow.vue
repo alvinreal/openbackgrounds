@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -169,7 +169,7 @@ function initContext() {
 
   if (!gl) return;
 
-  const ext = gl.getExtension("OES_standard_derivatives");
+  const _ext = gl.getExtension("OES_standard_derivatives");
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = compileShader(

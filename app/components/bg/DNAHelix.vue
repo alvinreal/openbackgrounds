@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -394,7 +394,7 @@ function updateColors() {
   }
 }
 
-function uploadColorBuffer() {
+function _uploadColorBuffer() {
   if (!gl || !buffers.color) return;
   gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, colorsArray);

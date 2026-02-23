@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -19,7 +19,7 @@ let startTime = 0;
 
 // Water simulation buffers
 const resolution = 256;
-let waterBuffers = {
+const waterBuffers = {
   current: new Float32Array(resolution * resolution),
   previous: new Float32Array(resolution * resolution),
   velocity: new Float32Array(resolution * resolution * 2),
@@ -29,7 +29,7 @@ let waterBuffers = {
 let waterTexture = null;
 
 // Mouse tracking
-let lastMousePosition = { x: 0, y: 0 };
+const lastMousePosition = { x: 0, y: 0 };
 let mouseThrottleTime = 0;
 
 // Settings

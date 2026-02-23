@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none holder">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -12,7 +12,7 @@ const canvasRef = ref(null);
 const fpsMeter = useFpsMeter();
 
 // Dark background color for contrast
-const backgroundColor = { r: 0.02, g: 0.0, b: 0.05 };
+const _backgroundColor = { r: 0.02, g: 0.0, b: 0.05 };
 
 let gl = null;
 let program = null;
@@ -21,9 +21,9 @@ let devicePixelRatio = 1;
 let startTime = 0;
 
 // Mouse tracking with more responsive movement
-let mousePosition = { x: 0.5, y: 0.5 };
-let targetMousePosition = { x: 0.5, y: 0.5 };
-let mouseVelocity = { x: 0, y: 0 };
+const mousePosition = { x: 0.5, y: 0.5 };
+const targetMousePosition = { x: 0.5, y: 0.5 };
+const mouseVelocity = { x: 0, y: 0 };
 
 const vertexShaderSource = `
   attribute vec2 a_position;

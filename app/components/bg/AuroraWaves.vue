@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -220,7 +220,7 @@ class Wave {
   }
 
   update() {
-    this.lines.push(new Line(this, this.owner.color));
+    this.lines.push(createLine(this, this.owner.color));
     if (this.lines.length > this.owner.options.width) {
       this.lines.shift();
     }
@@ -272,25 +272,24 @@ class Wave {
   }
 }
 
-class Line {
-  constructor(wave, color) {
-    this.color = color;
+function createLine(wave, color) {
+  const angle = wave.angle;
+  const speed = wave.speed;
 
-    const angle = wave.angle;
-    const speed = wave.speed;
+  angle[0] += speed[0];
+  angle[1] += speed[1];
+  angle[2] += speed[2];
+  angle[3] += speed[3];
 
-    angle[0] += speed[0];
-    angle[1] += speed[1];
-    angle[2] += speed[2];
-    angle[3] += speed[3];
-
-    this.angle = [
+  return {
+    color,
+    angle: [
       Math.sin(angle[0]),
       Math.sin(angle[1]),
       Math.sin(angle[2]),
       Math.sin(angle[3]),
-    ];
-  }
+    ],
+  };
 }
 
 const random = (min, max) => {
