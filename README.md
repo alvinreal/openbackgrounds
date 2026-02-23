@@ -7,6 +7,12 @@
 </div>
 
 <div align="center">
+  <a href="https://github.com/alvinreal/openbackgrounds/actions/workflows/ci.yml">
+    <img src="https://github.com/alvinreal/openbackgrounds/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+  </a>
+</div>
+
+<div align="center">
   <h3>Production-ready animated backgrounds for modern web & apps.</h3>
   <p>
     Build stunning interfaces with high-performance WebGL & Canvas components.<br/>
