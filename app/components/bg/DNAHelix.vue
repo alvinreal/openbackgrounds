@@ -105,7 +105,9 @@ onMounted(() => {
 
   window.addEventListener("resize", handleResize, { passive: true });
   window.addEventListener("pointermove", handlePointerMove, { passive: true });
-  window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
+  window.addEventListener("pointerleave", handlePointerLeave, {
+    passive: true,
+  });
   window.addEventListener("touchmove", handleTouchMove, { passive: true });
   window.addEventListener("touchend", handlePointerLeave, { passive: true });
 
@@ -194,7 +196,10 @@ function initContext() {
   if (!gl) return false;
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
   if (!vertexShader || !fragmentShader) return false;
 
   program = gl.createProgram();
@@ -205,7 +210,10 @@ function initContext() {
   gl.linkProgram(program);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("DNAHelix: program link error", gl.getProgramInfoLog(program));
+    console.error(
+      "DNAHelix: program link error",
+      gl.getProgramInfoLog(program),
+    );
     gl.deleteProgram(program);
     program = null;
     return false;
@@ -220,7 +228,10 @@ function initContext() {
   attributeLocations.color = gl.getAttribLocation(program, "a_color");
   attributeLocations.size = gl.getAttribLocation(program, "a_size");
 
-  uniformLocations.viewProjection = gl.getUniformLocation(program, "u_viewProjection");
+  uniformLocations.viewProjection = gl.getUniformLocation(
+    program,
+    "u_viewProjection",
+  );
   uniformLocations.pointScale = gl.getUniformLocation(program, "u_pointScale");
 
   gl.enable(gl.BLEND);
@@ -298,11 +309,20 @@ function renderFrame(now) {
   const centerY = pointer.y * 0.4;
   const centerZ = 0;
 
-  lookAt(matrices.view, [eyeX, eyeY, eyeZ], [centerX, centerY, centerZ], [0, 1, 0]);
+  lookAt(
+    matrices.view,
+    [eyeX, eyeY, eyeZ],
+    [centerX, centerY, centerZ],
+    [0, 1, 0],
+  );
   multiply(matrices.viewProjection, matrices.projection, matrices.view);
 
   gl.useProgram(program);
-  gl.uniformMatrix4fv(uniformLocations.viewProjection, false, matrices.viewProjection);
+  gl.uniformMatrix4fv(
+    uniformLocations.viewProjection,
+    false,
+    matrices.viewProjection,
+  );
   gl.uniform1f(uniformLocations.pointScale, pointScaleUniform);
 
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -313,23 +333,30 @@ function renderFrame(now) {
 }
 
 function updatePositions(time) {
-  const { radius, turns, length, rotationSpeed, driftStrength, verticalWave } = config;
+  const { radius, turns, length, rotationSpeed, driftStrength, verticalWave } =
+    config;
 
   for (let i = 0; i < pointCount; i += 1) {
     const meta = pointMeta[i];
     const angle = meta.t * turns + meta.strandPhase + time * rotationSpeed;
-    const baseRadius = radius + meta.wobble * 0.12 + Math.sin(meta.t * 8 + time * 0.4 + meta.drift) * driftStrength * 0.08;
+    const baseRadius =
+      radius +
+      meta.wobble * 0.12 +
+      Math.sin(meta.t * 8 + time * 0.4 + meta.drift) * driftStrength * 0.08;
 
     const centerX = Math.cos(angle) * (radius + baseRadius * 0.25);
     const centerZ = Math.sin(angle) * (radius + baseRadius * 0.25);
 
     const swirl = meta.crossAngle + time * 0.2;
-    const crossRadius = meta.crossRadius + Math.sin(time * 0.35 + meta.drift) * 0.04;
+    const crossRadius =
+      meta.crossRadius + Math.sin(time * 0.35 + meta.drift) * 0.04;
 
     const offsetX = Math.cos(swirl) * crossRadius;
     const offsetZ = Math.sin(swirl) * crossRadius;
-    const offsetY = Math.sin(swirl * 2.0 + meta.drift + time * 0.25) * verticalWave * 0.12;
-    const band = Math.sin(meta.t * Math.PI * 2 + time * 0.35) * driftStrength * 0.18;
+    const offsetY =
+      Math.sin(swirl * 2.0 + meta.drift + time * 0.25) * verticalWave * 0.12;
+    const band =
+      Math.sin(meta.t * Math.PI * 2 + time * 0.35) * driftStrength * 0.18;
 
     positionsArray[i * 3 + 0] = centerX + offsetX + band * 0.4;
     positionsArray[i * 3 + 1] = (meta.t - 0.5) * length + offsetY + band * 0.6;
@@ -355,7 +382,9 @@ function updateColors() {
 
     const centerWeight = 1 - Math.abs(t - 0.5) * 1.8;
     const alpha = clamp01(
-      palette.alpha[0] + (palette.alpha[1] - palette.alpha[0]) * clamp01(centerWeight + Math.sin(meta.drift) * 0.05)
+      palette.alpha[0] +
+        (palette.alpha[1] - palette.alpha[0]) *
+          clamp01(centerWeight + Math.sin(meta.drift) * 0.05),
     );
 
     colorsArray[i * 4 + 0] = base[0];
@@ -396,7 +425,7 @@ function compileShader(type, source) {
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error(
       `DNAHelix: shader compile error (${type === gl.VERTEX_SHADER ? "vertex" : "fragment"})`,
-      gl.getShaderInfoLog(shader)
+      gl.getShaderInfoLog(shader),
     );
     gl.deleteShader(shader);
     return null;

@@ -276,22 +276,22 @@ function compileShader(type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  
+
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error("Shader compile error:", gl.getShaderInfoLog(shader));
     gl.deleteShader(shader);
     return null;
   }
-  
+
   return shader;
 }
 
 function initContext() {
   devicePixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-  gl = canvasRef.value.getContext("webgl", { 
-    antialias: true, 
+  gl = canvasRef.value.getContext("webgl", {
+    antialias: true,
     alpha: false,
-    premultipliedAlpha: false 
+    premultipliedAlpha: false,
   });
 
   if (!gl) {
@@ -300,7 +300,10 @@ function initContext() {
   }
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
 
   if (!vertexShader || !fragmentShader) return false;
 
@@ -325,7 +328,7 @@ function initContext() {
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-    gl.STATIC_DRAW
+    gl.STATIC_DRAW,
   );
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
@@ -363,7 +366,7 @@ function renderFrame(now) {
   gl.uniform2f(
     gl.getUniformLocation(program, "u_resolution"),
     canvasRef.value.width,
-    canvasRef.value.height
+    canvasRef.value.height,
   );
 
   // Draw

@@ -17,7 +17,9 @@ const { fps, isVisible } = useFpsMeter();
 <style scoped>
 .fps-fade-enter-active,
 .fps-fade-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .fps-fade-enter-from,

@@ -40,7 +40,6 @@ We built this because most "animated background" libraries are either 5 years ol
 
 ## 📸 Showcase
 
-
 <div align="center">
   <kbd>
     <img src="public/readme-assets/showcase-grid.png" alt="Showcase Grid" width="100%">
@@ -52,6 +51,7 @@ We built this because most "animated background" libraries are either 5 years ol
 OpenBackgrounds is designed for real-world application, not just CodePen demos.
 
 ### Perfect for Login Screens
+
 Add subtle motion to static forms to increase perceived quality.
 
 <div align="center">
@@ -61,6 +61,7 @@ Add subtle motion to static forms to increase perceived quality.
 </div>
 
 ### Impactful Hero Sections
+
 Grab attention immediately with immersive WebGL visuals that don't distract from your copy.
 
 <div align="center">
@@ -91,7 +92,7 @@ bun add three simplex-noise
 
 ```vue
 <script setup>
-import AuroraWaves from './components/AuroraWaves.vue'
+import AuroraWaves from "./components/AuroraWaves.vue";
 </script>
 
 <template>
@@ -100,7 +101,7 @@ import AuroraWaves from './components/AuroraWaves.vue'
     <div class="absolute inset-0 -z-10">
       <AuroraWaves />
     </div>
-    
+
     <!-- Your content goes here -->
     <main class="relative z-10 flex items-center justify-center h-full">
       <h1 class="text-white text-6xl font-bold">Hello World</h1>

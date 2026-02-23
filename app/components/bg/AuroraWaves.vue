@@ -209,12 +209,7 @@ class Wave {
 
     const [minSpeed, maxSpeed] = owner.options.speed;
 
-    this.angle = [
-      random(TAU),
-      random(TAU),
-      random(TAU),
-      random(TAU),
-    ];
+    this.angle = [random(TAU), random(TAU), random(TAU), random(TAU)];
 
     this.speed = [
       random(minSpeed, maxSpeed) * randomSign(),

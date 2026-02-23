@@ -10,12 +10,13 @@
     padding-right: 5px;
     padding-left: 5px;
   }
-  
+
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  
-  a, button {
+
+  a,
+  button {
     touch-action: manipulation;
     -webkit-touch-callout: none;
   }

@@ -48,14 +48,14 @@ Thanks for your interest in contributing to OpenBackgrounds! Whether you're addi
 
 ### Useful Scripts
 
-| Script              | Description                                  |
-| ------------------- | -------------------------------------------- |
-| `pnpm dev`          | Start the Nuxt development server            |
-| `pnpm build`        | Build for production                         |
-| `pnpm lint`         | Run ESLint on `.ts`, `.js`, and `.vue` files |
-| `pnpm prettier:check` | Check formatting with Prettier            |
-| `pnpm prettier:fix` | Auto-fix formatting with Prettier            |
-| `pnpm screenshots`  | Generate screenshots for all backgrounds     |
+| Script                | Description                                  |
+| --------------------- | -------------------------------------------- |
+| `pnpm dev`            | Start the Nuxt development server            |
+| `pnpm build`          | Build for production                         |
+| `pnpm lint`           | Run ESLint on `.ts`, `.js`, and `.vue` files |
+| `pnpm prettier:check` | Check formatting with Prettier               |
+| `pnpm prettier:fix`   | Auto-fix formatting with Prettier            |
+| `pnpm screenshots`    | Generate screenshots for all backgrounds     |
 
 ---
 
