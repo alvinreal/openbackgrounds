@@ -22,14 +22,20 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
+
+      - name: Prepare Nuxt
+        run: bun run postinstall
 
       - name: Run Prettier check
-        run: npm run prettier:check
+        run: bun run prettier:check
 
       - name: Run ESLint
-        run: npm run lint
+        run: bun run lint
 
   build:
     runs-on: ubuntu-latest
@@ -46,8 +52,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: bun run build
