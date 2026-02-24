@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -158,7 +158,10 @@ function initContext() {
   if (!gl) return;
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
   if (!vertexShader || !fragmentShader) return;
 
   program = gl.createProgram();
@@ -169,7 +172,10 @@ function initContext() {
   gl.linkProgram(program);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("Unable to initialise shader program:", gl.getProgramInfoLog(program));
+    console.error(
+      "Unable to initialise shader program:",
+      gl.getProgramInfoLog(program),
+    );
     program = null;
     return;
   }
@@ -185,7 +191,7 @@ function initContext() {
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-    gl.STATIC_DRAW
+    gl.STATIC_DRAW,
   );
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
@@ -231,7 +237,10 @@ function resizeCanvas() {
   gl.viewport(0, 0, canvasRef.value.width, canvasRef.value.height);
 
   if (state.uniforms.u_ratio) {
-    gl.uniform1f(state.uniforms.u_ratio, canvasRef.value.width / canvasRef.value.height);
+    gl.uniform1f(
+      state.uniforms.u_ratio,
+      canvasRef.value.width / canvasRef.value.height,
+    );
   }
 }
 
@@ -241,7 +250,10 @@ function renderFrame(now) {
   pointer.x += (pointer.targetX - pointer.x) * 0.05;
   pointer.y += (pointer.targetY - pointer.y) * 0.05;
 
-  const scrollMax = Math.max(document.body.scrollHeight - window.innerHeight, 1);
+  const scrollMax = Math.max(
+    document.body.scrollHeight - window.innerHeight,
+    1,
+  );
   const scrollProgress = Math.min(window.scrollY / scrollMax, 1);
   const elapsed = now - state.startTime;
 

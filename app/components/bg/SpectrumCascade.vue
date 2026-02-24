@@ -1,6 +1,9 @@
 <template>
-  <div ref="holderRef" class="absolute inset-0 pointer-events-none overflow-hidden">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+  <div
+    ref="holderRef"
+    class="absolute inset-0 pointer-events-none overflow-hidden"
+  >
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -124,8 +127,7 @@ function buildStripes() {
   for (let i = 0; i < count; i += 1) {
     const spacing = 1 / count;
     const jitter = spacing * 0.45;
-    const baseCenter =
-      spacing * (i + 0.5) + (Math.random() - 0.5) * jitter;
+    const baseCenter = spacing * (i + 0.5) + (Math.random() - 0.5) * jitter;
 
     stripes.push({
       baseColor: palette[i % palette.length],
@@ -165,35 +167,29 @@ function draw(time) {
   ctx.globalCompositeOperation = "lighter";
   stripes.forEach((stripe) => {
     const drift = Math.sin(time * stripe.speed + stripe.phase);
-    const wave = (Math.sin(time * stripe.pulseSpeed + stripe.sheenPhase) + 1) * 0.5;
+    const wave =
+      (Math.sin(time * stripe.pulseSpeed + stripe.sheenPhase) + 1) * 0.5;
 
-    const center =
-      stripe.center + drift * stripe.floatAmplitude;
+    const center = stripe.center + drift * stripe.floatAmplitude;
     const stripeWidth =
-      width *
-      stripe.width *
-      (1 + (wave - 0.5) * config.pulseStrength * 2.4);
+      width * stripe.width * (1 + (wave - 0.5) * config.pulseStrength * 2.4);
 
     const x = center * width;
     const gradient = ctx.createLinearGradient(
       x - stripeWidth * 0.6,
       0,
       x + stripeWidth * 0.6,
-      height
+      height,
     );
 
+    gradient.addColorStop(0, adjustColor(stripe.baseColor, -0.5 + wave * -0.2));
     gradient.addColorStop(
-      0,
-      adjustColor(stripe.baseColor, -0.5 + wave * -0.2)
+      0.5,
+      adjustColor(stripe.baseColor, 0.18 + wave * 0.32),
     );
-    gradient.addColorStop(0.5, adjustColor(stripe.baseColor, 0.18 + wave * 0.32));
-    gradient.addColorStop(
-      1,
-      adjustColor(stripe.baseColor, -0.25 + wave * 0.1)
-    );
+    gradient.addColorStop(1, adjustColor(stripe.baseColor, -0.25 + wave * 0.1));
 
-    const blurAmount =
-      10 + Math.max(width, height) * 0.012 * stripe.blurScale;
+    const blurAmount = 10 + Math.max(width, height) * 0.012 * stripe.blurScale;
 
     ctx.save();
     ctx.globalAlpha = stripe.alpha * (0.7 + wave * 0.4);
@@ -203,7 +199,7 @@ function draw(time) {
       x - stripeWidth * 0.65,
       -height * 0.2,
       stripeWidth * 1.3,
-      height * 1.4
+      height * 1.4,
     );
     ctx.restore();
   });
@@ -218,7 +214,7 @@ function draw(time) {
     0,
     width * overlay.center[0],
     height * overlay.center[1],
-    Math.max(width, height) * overlay.radius
+    Math.max(width, height) * overlay.radius,
   );
   radial.addColorStop(0, overlay.inner);
   radial.addColorStop(1, overlay.outer);
@@ -244,7 +240,7 @@ function draw(time) {
     Math.max(width, height) * 0.1,
     width / 2,
     height * 0.54,
-    Math.max(width, height) * 0.85
+    Math.max(width, height) * 0.85,
   );
   vignette.addColorStop(0, "rgba(0,0,0,0)");
   vignette.addColorStop(1, theme.vignette);

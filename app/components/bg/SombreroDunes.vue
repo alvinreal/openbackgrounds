@@ -1,27 +1,27 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import * as THREE from 'three'
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import * as THREE from "three";
 
-const holderRef = ref(null)
-const canvasRef = ref(null)
+const holderRef = ref(null);
+const canvasRef = ref(null);
 
-const fpsMeter = useFpsMeter()
+const fpsMeter = useFpsMeter();
 
-let renderer = null
-let scene = null
-let camera = null
-let dunesMesh = null
-let baseMesh = null
-let haloMesh = null
-let frameId = null
-const cleanupCallbacks = []
-const lookTarget = new THREE.Vector3(0, -0.4, 0)
+let renderer = null;
+let scene = null;
+let camera = null;
+let dunesMesh = null;
+let baseMesh = null;
+let haloMesh = null;
+let frameId = null;
+const cleanupCallbacks = [];
+const lookTarget = new THREE.Vector3(0, -0.4, 0);
 
 const uniforms = {
   uTime: { value: 0 },
@@ -30,10 +30,10 @@ const uniforms = {
   uNoiseRange: { value: 0.95 },
   uSombreroAmplitude: { value: 0.52 },
   uSombreroFrequency: { value: 4.6 },
-  uLineColor: { value: new THREE.Color('#a9a0ff') },
-  uGlowColor: { value: new THREE.Color('#0c001f') },
-  uAccentColor: { value: new THREE.Color('#294fba') }
-}
+  uLineColor: { value: new THREE.Color("#a9a0ff") },
+  uGlowColor: { value: new THREE.Color("#0c001f") },
+  uAccentColor: { value: new THREE.Color("#294fba") },
+};
 
 const vertexShader = `
   varying vec2 vUv;
@@ -151,7 +151,7 @@ const vertexShader = `
     vec3 displacedPosition = vec3(position.x, position.y, height);
     gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
   }
-`
+`;
 
 const fragmentShader = `
   varying vec2 vUv;
@@ -175,35 +175,35 @@ const fragmentShader = `
 
     gl_FragColor = vec4(base, alpha);
   }
-`
+`;
 
 function createScene(holder) {
-  scene = new THREE.Scene()
-  scene.fog = new THREE.Fog(0x040014, 18, 52)
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x040014, 18, 52);
 
-  const width = holder.clientWidth || window.innerWidth
-  const height = holder.clientHeight || window.innerHeight
+  const width = holder.clientWidth || window.innerWidth;
+  const height = holder.clientHeight || window.innerHeight;
 
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.75)
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
 
   renderer = new THREE.WebGLRenderer({
     canvas: canvasRef.value,
     alpha: true,
-    antialias: true
-  })
-  renderer.setPixelRatio(dpr)
-  renderer.setSize(width, height, false)
-  renderer.outputColorSpace = THREE.SRGBColorSpace
-  renderer.setClearColor(0x000000, 0)
+    antialias: true,
+  });
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(width, height, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setClearColor(0x000000, 0);
 
-  camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 80)
-  camera.position.set(0, 3.1, 9.8)
-  camera.lookAt(lookTarget)
+  camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 80);
+  camera.position.set(0, 3.1, 9.8);
+  camera.lookAt(lookTarget);
 
-  const hemiLight = new THREE.HemisphereLight(0x6655ff, 0x07001a, 0.45)
-  scene.add(hemiLight)
+  const hemiLight = new THREE.HemisphereLight(0x6655ff, 0x07001a, 0.45);
+  scene.add(hemiLight);
 
-  const geometry = new THREE.PlaneGeometry(40, 24, 360, 220)
+  const geometry = new THREE.PlaneGeometry(40, 24, 360, 220);
   const material = new THREE.ShaderMaterial({
     uniforms,
     vertexShader,
@@ -212,35 +212,35 @@ function createScene(holder) {
     transparent: true,
     depthTest: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending
-  })
+    blending: THREE.AdditiveBlending,
+  });
 
-  dunesMesh = new THREE.Mesh(geometry, material)
-  dunesMesh.rotation.x = -Math.PI / 2
-  dunesMesh.position.y = -0.8
-  scene.add(dunesMesh)
+  dunesMesh = new THREE.Mesh(geometry, material);
+  dunesMesh.rotation.x = -Math.PI / 2;
+  dunesMesh.position.y = -0.8;
+  scene.add(dunesMesh);
 
-  const baseGeometry = new THREE.PlaneGeometry(60, 34, 1, 1)
+  const baseGeometry = new THREE.PlaneGeometry(60, 34, 1, 1);
   const baseMaterial = new THREE.MeshBasicMaterial({
     color: 0x0a0018,
     transparent: true,
     opacity: 0.42,
-    depthWrite: false
-  })
+    depthWrite: false,
+  });
 
-  baseMesh = new THREE.Mesh(baseGeometry, baseMaterial)
-  baseMesh.rotation.x = -Math.PI / 2
-  baseMesh.position.y = -1.4
-  scene.add(baseMesh)
+  baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
+  baseMesh.rotation.x = -Math.PI / 2;
+  baseMesh.position.y = -1.4;
+  scene.add(baseMesh);
 
-  const haloGeometry = new THREE.PlaneGeometry(90, 54, 1, 1)
+  const haloGeometry = new THREE.PlaneGeometry(90, 54, 1, 1);
   const haloMaterial = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     uniforms: {
-      uInner: { value: new THREE.Color('#160033') },
-      uOuter: { value: new THREE.Color('#010008') }
+      uInner: { value: new THREE.Color("#160033") },
+      uOuter: { value: new THREE.Color("#010008") },
     },
     vertexShader: `
       varying vec2 vUv;
@@ -261,105 +261,107 @@ function createScene(holder) {
         float alpha = smoothstep(1.1, 0.2, dist) * 0.5;
         gl_FragColor = vec4(col, alpha);
       }
-    `
-  })
+    `,
+  });
 
-  haloMesh = new THREE.Mesh(haloGeometry, haloMaterial)
-  haloMesh.rotation.x = -Math.PI / 2
-  haloMesh.position.y = -2.2
-  scene.add(haloMesh)
+  haloMesh = new THREE.Mesh(haloGeometry, haloMaterial);
+  haloMesh.rotation.x = -Math.PI / 2;
+  haloMesh.position.y = -2.2;
+  scene.add(haloMesh);
 }
 
 function handleResize() {
-  if (!renderer || !camera || !holderRef.value) return
+  if (!renderer || !camera || !holderRef.value) return;
 
-  const holder = holderRef.value
-  const width = holder.clientWidth || window.innerWidth
-  const height = holder.clientHeight || window.innerHeight
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.75)
+  const holder = holderRef.value;
+  const width = holder.clientWidth || window.innerWidth;
+  const height = holder.clientHeight || window.innerHeight;
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
 
-  renderer.setPixelRatio(dpr)
-  renderer.setSize(width, height, false)
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(width, height, false);
 
-  camera.aspect = width / height
-  camera.updateProjectionMatrix()
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 }
 
-const clock = new THREE.Clock()
+const clock = new THREE.Clock();
 
 function renderFrame() {
-  const elapsed = clock.getElapsedTime()
-  uniforms.uTime.value = elapsed
+  const elapsed = clock.getElapsedTime();
+  uniforms.uTime.value = elapsed;
 
   if (dunesMesh) {
-    dunesMesh.rotation.z = Math.sin(elapsed * 0.08) * 0.06
+    dunesMesh.rotation.z = Math.sin(elapsed * 0.08) * 0.06;
   }
 
   if (camera) {
-    const orbit = Math.sin(elapsed * 0.028) * 0.24
-    camera.position.x = orbit
-    camera.lookAt(lookTarget)
+    const orbit = Math.sin(elapsed * 0.028) * 0.24;
+    camera.position.x = orbit;
+    camera.lookAt(lookTarget);
   }
 
   if (!renderer || !scene || !camera) {
-    return
+    return;
   }
 
-  fpsMeter.tick()
-  renderer.render(scene, camera)
-  frameId = requestAnimationFrame(renderFrame)
+  fpsMeter.tick();
+  renderer.render(scene, camera);
+  frameId = requestAnimationFrame(renderFrame);
 }
 
 onMounted(() => {
-  const holder = holderRef.value
-  const canvas = canvasRef.value
-  if (!holder || !canvas) return
+  const holder = holderRef.value;
+  const canvas = canvasRef.value;
+  if (!holder || !canvas) return;
 
-  createScene(holder)
-  handleResize()
+  createScene(holder);
+  handleResize();
 
-  const resizeHandler = () => handleResize()
-  window.addEventListener('resize', resizeHandler, { passive: true })
-  cleanupCallbacks.push(() => window.removeEventListener('resize', resizeHandler))
+  const resizeHandler = () => handleResize();
+  window.addEventListener("resize", resizeHandler, { passive: true });
+  cleanupCallbacks.push(() =>
+    window.removeEventListener("resize", resizeHandler),
+  );
 
-  fpsMeter.start()
-  frameId = requestAnimationFrame(renderFrame)
-})
+  fpsMeter.start();
+  frameId = requestAnimationFrame(renderFrame);
+});
 
 onBeforeUnmount(() => {
-  cleanupCallbacks.splice(0).forEach((fn) => fn())
+  cleanupCallbacks.splice(0).forEach((fn) => fn());
 
   if (frameId) {
-    cancelAnimationFrame(frameId)
-    frameId = null
+    cancelAnimationFrame(frameId);
+    frameId = null;
   }
 
-  fpsMeter.stop()
+  fpsMeter.stop();
 
   if (dunesMesh) {
-    dunesMesh.geometry.dispose()
-    dunesMesh.material.dispose()
-    dunesMesh = null
+    dunesMesh.geometry.dispose();
+    dunesMesh.material.dispose();
+    dunesMesh = null;
   }
 
   if (baseMesh) {
-    baseMesh.geometry.dispose()
-    baseMesh.material.dispose()
-    baseMesh = null
+    baseMesh.geometry.dispose();
+    baseMesh.material.dispose();
+    baseMesh = null;
   }
 
   if (haloMesh) {
-    haloMesh.geometry.dispose()
-    haloMesh.material.dispose()
-    haloMesh = null
+    haloMesh.geometry.dispose();
+    haloMesh.material.dispose();
+    haloMesh = null;
   }
 
   if (renderer) {
-    renderer.dispose()
-    renderer = null
+    renderer.dispose();
+    renderer = null;
   }
 
-  scene = null
-  camera = null
-})
+  scene = null;
+  camera = null;
+});
 </script>

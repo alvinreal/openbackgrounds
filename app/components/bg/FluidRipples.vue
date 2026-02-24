@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -19,7 +19,7 @@ let startTime = 0;
 
 // Water simulation buffers
 const resolution = 256;
-let waterBuffers = {
+const waterBuffers = {
   current: new Float32Array(resolution * resolution),
   previous: new Float32Array(resolution * resolution),
   velocity: new Float32Array(resolution * resolution * 2),
@@ -29,7 +29,7 @@ let waterBuffers = {
 let waterTexture = null;
 
 // Mouse tracking
-let lastMousePosition = { x: 0, y: 0 };
+const lastMousePosition = { x: 0, y: 0 };
 let mouseThrottleTime = 0;
 
 // Settings
@@ -150,22 +150,22 @@ function compileShader(type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  
+
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error("Shader compile error:", gl.getShaderInfoLog(shader));
     gl.deleteShader(shader);
     return null;
   }
-  
+
   return shader;
 }
 
 function initContext() {
   devicePixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-  gl = canvasRef.value.getContext("webgl", { 
-    antialias: true, 
+  gl = canvasRef.value.getContext("webgl", {
+    antialias: true,
     alpha: false,
-    premultipliedAlpha: false 
+    premultipliedAlpha: false,
   });
 
   if (!gl) {
@@ -174,7 +174,10 @@ function initContext() {
   }
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
 
   if (!vertexShader || !fragmentShader) return false;
 
@@ -199,7 +202,7 @@ function initContext() {
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-    gl.STATIC_DRAW
+    gl.STATIC_DRAW,
   );
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
@@ -237,7 +240,13 @@ function resizeCanvas() {
 
 function updateWaterSimulation() {
   const { current, previous, velocity, vorticity } = waterBuffers;
-  const { damping, tension, velocityDissipation, densityDissipation, vorticityInfluence } = settings;
+  const {
+    damping,
+    tension,
+    velocityDissipation,
+    densityDissipation,
+    vorticityInfluence,
+  } = settings;
 
   // Apply velocity dissipation
   for (let i = 0; i < resolution * resolution * 2; i++) {
@@ -262,20 +271,22 @@ function updateWaterSimulation() {
       for (let j = 1; j < resolution - 1; j++) {
         const index = i * resolution + j;
         const velIndex = index * 2;
-        
+
         const left = Math.abs(vorticity[index - 1]);
         const right = Math.abs(vorticity[index + 1]);
         const bottom = Math.abs(vorticity[index - resolution]);
         const top = Math.abs(vorticity[index + resolution]);
-        
+
         const gradX = (right - left) * 0.5;
         const gradY = (top - bottom) * 0.5;
         const length = Math.sqrt(gradX * gradX + gradY * gradY) + 1e-5;
-        
+
         const safeVorticity = Math.max(-1.0, Math.min(1.0, vorticity[index]));
-        const forceX = (gradY / length) * safeVorticity * vorticityInfluence * 0.1;
-        const forceY = (-gradX / length) * safeVorticity * vorticityInfluence * 0.1;
-        
+        const forceX =
+          (gradY / length) * safeVorticity * vorticityInfluence * 0.1;
+        const forceY =
+          (-gradX / length) * safeVorticity * vorticityInfluence * 0.1;
+
         velocity[velIndex] += Math.max(-0.1, Math.min(0.1, forceX));
         velocity[velIndex + 1] += Math.max(-0.1, Math.min(0.1, forceY));
       }
@@ -287,23 +298,24 @@ function updateWaterSimulation() {
     for (let j = 1; j < resolution - 1; j++) {
       const index = i * resolution + j;
       const velIndex = index * 2;
-      
+
       const top = previous[index - resolution];
       const bottom = previous[index + resolution];
       const left = previous[index - 1];
       const right = previous[index + 1];
-      
+
       current[index] = (top + bottom + left + right) / 2 - current[index];
-      current[index] = current[index] * damping + previous[index] * (1 - damping);
+      current[index] =
+        current[index] * damping + previous[index] * (1 - damping);
       current[index] += (0 - previous[index]) * tension;
-      
+
       const velMagnitude = Math.sqrt(
         velocity[velIndex] * velocity[velIndex] +
-        velocity[velIndex + 1] * velocity[velIndex + 1]
+          velocity[velIndex + 1] * velocity[velIndex + 1],
       );
       const safeVelInfluence = Math.min(velMagnitude * 0.01, 0.1);
       current[index] += safeVelInfluence;
-      
+
       current[index] *= 1.0 - densityDissipation * 0.01;
       current[index] = Math.max(-2.0, Math.min(2.0, current[index]));
     }
@@ -315,7 +327,7 @@ function updateWaterSimulation() {
     current[(resolution - 1) * resolution + i] = 0;
     current[i * resolution] = 0;
     current[i * resolution + (resolution - 1)] = 0;
-    
+
     velocity[i * 2] = 0;
     velocity[i * 2 + 1] = 0;
     velocity[((resolution - 1) * resolution + i) * 2] = 0;
@@ -327,7 +339,10 @@ function updateWaterSimulation() {
   }
 
   // Swap buffers
-  [waterBuffers.current, waterBuffers.previous] = [waterBuffers.previous, waterBuffers.current];
+  [waterBuffers.current, waterBuffers.previous] = [
+    waterBuffers.previous,
+    waterBuffers.current,
+  ];
 
   // Update texture
   if (gl && waterTexture) {
@@ -341,7 +356,7 @@ function updateWaterSimulation() {
       0,
       gl.LUMINANCE,
       gl.FLOAT,
-      waterBuffers.current
+      waterBuffers.current,
     );
   }
 }
@@ -349,43 +364,49 @@ function updateWaterSimulation() {
 function addRipple(x, y, strength = 1.0) {
   const normalizedX = x / window.innerWidth;
   const normalizedY = 1.0 - y / window.innerHeight;
-  
+
   const texX = Math.floor(normalizedX * resolution);
   const texY = Math.floor(normalizedY * resolution);
-  
+
   const radius = settings.rippleRadius;
   const rippleStrength = strength * (settings.splatForce / 100000);
   const radiusSquared = radius * radius;
-  
+
   for (let i = -radius; i <= radius; i++) {
     for (let j = -radius; j <= radius; j++) {
       const distanceSquared = i * i + j * j;
-      
+
       if (distanceSquared <= radiusSquared) {
         const posX = texX + i;
         const posY = texY + j;
-        
+
         if (posX >= 0 && posX < resolution && posY >= 0 && posY < resolution) {
           const index = posY * resolution + posX;
           const velIndex = index * 2;
-          
+
           const distance = Math.sqrt(distanceSquared);
           const falloff = 1.0 - distance / radius;
-          const rippleValue = Math.cos((distance / radius) * Math.PI * 0.5) * rippleStrength * falloff;
-          
+          const rippleValue =
+            Math.cos((distance / radius) * Math.PI * 0.5) *
+            rippleStrength *
+            falloff;
+
           waterBuffers.previous[index] += rippleValue;
-          
+
           const angle = Math.atan2(j, i);
           const velocityStrength = rippleValue * 0.2;
-          
+
           waterBuffers.velocity[velIndex] += Math.cos(angle) * velocityStrength;
-          waterBuffers.velocity[velIndex + 1] += Math.sin(angle) * velocityStrength;
-          
+          waterBuffers.velocity[velIndex + 1] +=
+            Math.sin(angle) * velocityStrength;
+
           // Add swirl
           const swirlAngle = angle + Math.PI * 0.5;
           const swirlStrength = Math.min(velocityStrength * 0.3, 0.1);
-          waterBuffers.velocity[velIndex] += Math.cos(swirlAngle) * swirlStrength;
-          waterBuffers.velocity[velIndex + 1] += Math.sin(swirlAngle) * swirlStrength;
+          waterBuffers.velocity[velIndex] +=
+            Math.cos(swirlAngle) * swirlStrength;
+          waterBuffers.velocity[velIndex + 1] +=
+            Math.sin(swirlAngle) * swirlStrength;
         }
       }
     }
@@ -396,28 +417,29 @@ function onMouseMove(event) {
   const rect = canvasRef.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  
+
   const now = performance.now();
   if (now - mouseThrottleTime < 8) return;
   mouseThrottleTime = now;
-  
+
   const dx = x - lastMousePosition.x;
   const dy = y - lastMousePosition.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
   const velocity = distance / 8;
-  
+
   if (distance > 1) {
     const velocityInfluence = Math.min(velocity / 10, 2.0);
     const baseIntensity = Math.min(distance / 20, 1.0);
-    const fluidIntensity = baseIntensity * velocityInfluence * settings.mouseIntensity;
+    const fluidIntensity =
+      baseIntensity * velocityInfluence * settings.mouseIntensity;
     const variation = Math.random() * 0.3 + 0.7;
     const finalIntensity = fluidIntensity * variation;
-    
+
     const jitterX = x + (Math.random() - 0.5) * 3;
     const jitterY = y + (Math.random() - 0.5) * 3;
-    
+
     addRipple(jitterX, jitterY, finalIntensity);
-    
+
     lastMousePosition.x = x;
     lastMousePosition.y = y;
   }
@@ -427,7 +449,7 @@ function onMouseClick(event) {
   const rect = canvasRef.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  
+
   addRipple(x, y, settings.clickIntensity);
 }
 
@@ -444,17 +466,28 @@ function renderFrame(now) {
   gl.uniform2f(
     gl.getUniformLocation(program, "u_resolution"),
     canvasRef.value.width,
-    canvasRef.value.height
+    canvasRef.value.height,
   );
-  gl.uniform1f(gl.getUniformLocation(program, "u_speed"), settings.animationSpeed);
-  gl.uniform1f(gl.getUniformLocation(program, "u_waterStrength"), settings.waterStrength);
-  
+  gl.uniform1f(
+    gl.getUniformLocation(program, "u_speed"),
+    settings.animationSpeed,
+  );
+  gl.uniform1f(
+    gl.getUniformLocation(program, "u_waterStrength"),
+    settings.waterStrength,
+  );
+
   // Ice White color preset (subtle, elegant)
   gl.uniform3f(gl.getUniformLocation(program, "u_color1"), 1.0, 1.0, 1.0);
   gl.uniform3f(gl.getUniformLocation(program, "u_color2"), 0.9, 0.95, 1.0);
   gl.uniform3f(gl.getUniformLocation(program, "u_color3"), 0.8, 0.9, 1.0);
-  gl.uniform3f(gl.getUniformLocation(program, "u_background"), 0.02, 0.02, 0.05);
-  
+  gl.uniform3f(
+    gl.getUniformLocation(program, "u_background"),
+    0.02,
+    0.02,
+    0.05,
+  );
+
   // Bind water texture
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, waterTexture);
@@ -481,7 +514,7 @@ onMounted(() => {
 
   fpsMeter.start();
   startTime = performance.now();
-  
+
   // Add initial ripple
   setTimeout(() => {
     addRipple(window.innerWidth / 2, window.innerHeight / 2, 1.5);

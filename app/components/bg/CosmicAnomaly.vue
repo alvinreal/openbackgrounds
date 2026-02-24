@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 overflow-hidden">
-    <canvas ref="canvasRef" class="block w-full h-full pointer-events-none"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full pointer-events-none" />
   </div>
 </template>
 
@@ -37,7 +37,11 @@ const pointerTarget = new THREE.Vector2(-10, -10);
 const palette = {
   sphere: [0x4360ff, 0xb38cff, 0x43c3ff, 0x3540ff],
   ringColor: (i, count, j, total) =>
-    new THREE.Color().setHSL(0.58 + (i / count) * 0.12 + (j / total) * 0.05, 0.65, 0.6),
+    new THREE.Color().setHSL(
+      0.58 + (i / count) * 0.12 + (j / total) * 0.05,
+      0.65,
+      0.6,
+    ),
   hdr: "https://www.spacespheremaps.com/wp-content/uploads/HDR_blue_nebulae-1.hdr",
 };
 
@@ -227,7 +231,12 @@ function initScene() {
   controls.enabled = false;
 
   const renderPass = new RenderPass(scene, camera);
-  const bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 1.2, 0.3, 0.85);
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(width, height),
+    1.2,
+    0.3,
+    0.85,
+  );
   bloomPass.threshold = 0;
   bloomPass.strength = 0.9;
   bloomPass.radius = 0.4;
@@ -298,7 +307,10 @@ function createOrbitRings(radius, count, thickness) {
       sizes[j] = Math.random() * 0.12 + 0.08;
     }
 
-    ringGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    ringGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3),
+    );
     ringGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     ringGeometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
 
@@ -322,7 +334,7 @@ function createStarfield(count, spread) {
     positions.push(
       (Math.random() - 0.5) * spread,
       (Math.random() - 0.5) * spread,
-      (Math.random() - 0.5) * spread
+      (Math.random() - 0.5) * spread,
     );
     const color = new THREE.Color();
     color.setHSL(0.58 + Math.random() * 0.08, 0.25, 0.4 + Math.random() * 0.4);
@@ -330,7 +342,10 @@ function createStarfield(count, spread) {
     sizes.push(0.45 + Math.random() * 0.9);
   }
 
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3),
+  );
   geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
   geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
 
@@ -422,7 +437,12 @@ function applyPalette() {
     const ringColors = ring.geometry.getAttribute("color");
     const count = ringColors.count;
     for (let j = 0; j < count; j += 1) {
-      const color = palette.ringColor(ringIndex, orbitRings.children.length, j, count);
+      const color = palette.ringColor(
+        ringIndex,
+        orbitRings.children.length,
+        j,
+        count,
+      );
       ringColors.setXYZ(j, color.r, color.g, color.b);
     }
     ringColors.needsUpdate = true;
@@ -505,5 +525,4 @@ function disposeScene() {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

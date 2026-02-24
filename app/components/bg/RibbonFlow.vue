@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -169,10 +169,13 @@ function initContext() {
 
   if (!gl) return;
 
-  const ext = gl.getExtension("OES_standard_derivatives");
+  const _ext = gl.getExtension("OES_standard_derivatives");
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
   if (!vertexShader || !fragmentShader) return;
 
   program = gl.createProgram();
@@ -183,7 +186,10 @@ function initContext() {
   gl.linkProgram(program);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("RibbonFlow: failed to link program", gl.getProgramInfoLog(program));
+    console.error(
+      "RibbonFlow: failed to link program",
+      gl.getProgramInfoLog(program),
+    );
     program = null;
     return;
   }
@@ -239,7 +245,11 @@ function createMesh() {
 
   meshData.indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, meshData.indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+  gl.bufferData(
+    gl.ELEMENT_ARRAY_BUFFER,
+    new Uint16Array(indices),
+    gl.STATIC_DRAW,
+  );
 
   meshData.indexCount = indices.length;
 
@@ -257,7 +267,7 @@ function compileShader(type, source) {
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error(
       `RibbonFlow: shader compile error (${type === gl.VERTEX_SHADER ? "vertex" : "fragment"})`,
-      gl.getShaderInfoLog(shader)
+      gl.getShaderInfoLog(shader),
     );
     gl.deleteShader(shader);
     return null;
@@ -314,20 +324,27 @@ function createPerspectiveMatrix(fovDegrees, aspect, near, far) {
   const nf = 1 / (near - far);
 
   return new Float32Array([
-    f / aspect, 0, 0, 0,
-    0, f, 0, 0,
-    0, 0, (far + near) * nf, -1,
-    0, 0, 2 * far * near * nf, 0,
+    f / aspect,
+    0,
+    0,
+    0,
+    0,
+    f,
+    0,
+    0,
+    0,
+    0,
+    (far + near) * nf,
+    -1,
+    0,
+    0,
+    2 * far * near * nf,
+    0,
   ]);
 }
 
 function createIdentityMatrix() {
-  return new Float32Array([
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1,
-  ]);
+  return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 }
 </script>
 

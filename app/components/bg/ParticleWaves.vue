@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -80,7 +80,11 @@ const matrices = {
   viewProjection: new Float32Array(16),
 };
 
-const fieldUniform = new Float32Array([settings.fieldBase, settings.amplitude, settings.fieldBase]);
+const fieldUniform = new Float32Array([
+  settings.fieldBase,
+  settings.amplitude,
+  settings.fieldBase,
+]);
 
 onMounted(() => {
   if (!canvasRef.value || !holderRef.value) return;
@@ -142,7 +146,10 @@ function initContext() {
   if (!gl) return;
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
   if (!vertexShader || !fragmentShader) return;
 
   program = gl.createProgram();
@@ -156,7 +163,10 @@ function initContext() {
   gl.deleteShader(fragmentShader);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("WaveField: failed to link shader program", gl.getProgramInfoLog(program));
+    console.error(
+      "WaveField: failed to link shader program",
+      gl.getProgramInfoLog(program),
+    );
     program = null;
     return;
   }
@@ -200,7 +210,10 @@ function handleResize() {
   const canvasWidth = Math.floor(holderWidth * devicePixelRatio);
   const canvasHeight = Math.floor(holderHeight * devicePixelRatio);
 
-  if (canvasRef.value.width !== canvasWidth || canvasRef.value.height !== canvasHeight) {
+  if (
+    canvasRef.value.width !== canvasWidth ||
+    canvasRef.value.height !== canvasHeight
+  ) {
     canvasRef.value.width = canvasWidth;
     canvasRef.value.height = canvasHeight;
     canvasRef.value.style.width = `${holderWidth}px`;
@@ -290,7 +303,12 @@ function renderFrame(now) {
   const centerY = settings.baseHeight;
   const centerZ = 0;
 
-  lookAt(matrices.view, [eyeX, eyeY, eyeZ], [centerX, centerY, centerZ], [0, 1, 0]);
+  lookAt(
+    matrices.view,
+    [eyeX, eyeY, eyeZ],
+    [centerX, centerY, centerZ],
+    [0, 1, 0],
+  );
   multiply(matrices.viewProjection, matrices.projection, matrices.view);
 
   gl.clearColor(0, 0, 0, 0);
@@ -298,9 +316,16 @@ function renderFrame(now) {
 
   gl.uniform1f(uniformLocations.time, elapsed);
   gl.uniform1f(uniformLocations.speed, settings.speed);
-  gl.uniform1f(uniformLocations.size, settings.basePointSize * devicePixelRatio);
+  gl.uniform1f(
+    uniformLocations.size,
+    settings.basePointSize * devicePixelRatio,
+  );
   gl.uniform3fv(uniformLocations.field, fieldUniform);
-  gl.uniformMatrix4fv(uniformLocations.projection, false, matrices.viewProjection);
+  gl.uniformMatrix4fv(
+    uniformLocations.projection,
+    false,
+    matrices.viewProjection,
+  );
   gl.uniform1f(uniformLocations.glow, settings.glow);
 
   gl.drawArrays(gl.POINTS, 0, pointCount);
@@ -329,7 +354,7 @@ function compileShader(type, source) {
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error(
       `WaveField: shader compile error (${type === gl.VERTEX_SHADER ? "vertex" : "fragment"})`,
-      gl.getShaderInfoLog(shader)
+      gl.getShaderInfoLog(shader),
     );
     gl.deleteShader(shader);
     return null;
@@ -349,8 +374,13 @@ function samplePalette(positionRatio, depthRatio) {
   const fade = 0.55 + 0.35 * (1 - clampedDepth);
 
   const r = clamp01(lerp(start[0], end[0], mixRatio) * fade);
-  const g = clamp01(lerp(start[1], end[1], mixRatio) * (0.92 + 0.08 * Math.sin(clampedDepth * 6)));
-  const b = clamp01(lerp(start[2], end[2], mixRatio) * (0.85 + 0.12 * Math.cos(clampedT * 5)));
+  const g = clamp01(
+    lerp(start[1], end[1], mixRatio) *
+      (0.92 + 0.08 * Math.sin(clampedDepth * 6)),
+  );
+  const b = clamp01(
+    lerp(start[2], end[2], mixRatio) * (0.85 + 0.12 * Math.cos(clampedT * 5)),
+  );
   const alpha = clamp01(0.9 + (1 - clampedDepth) * 0.1);
 
   return [r, g, b, alpha];

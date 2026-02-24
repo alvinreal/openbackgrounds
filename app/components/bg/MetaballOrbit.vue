@@ -1,6 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none holder">
-    <canvas ref="canvasRef" class="block w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="block w-full h-full" />
   </div>
 </template>
 
@@ -12,7 +12,7 @@ const canvasRef = ref(null);
 const fpsMeter = useFpsMeter();
 
 // Dark background color for contrast
-const backgroundColor = { r: 0.02, g: 0.0, b: 0.05 };
+const _backgroundColor = { r: 0.02, g: 0.0, b: 0.05 };
 
 let gl = null;
 let program = null;
@@ -21,9 +21,9 @@ let devicePixelRatio = 1;
 let startTime = 0;
 
 // Mouse tracking with more responsive movement
-let mousePosition = { x: 0.5, y: 0.5 };
-let targetMousePosition = { x: 0.5, y: 0.5 };
-let mouseVelocity = { x: 0, y: 0 };
+const mousePosition = { x: 0.5, y: 0.5 };
+const targetMousePosition = { x: 0.5, y: 0.5 };
+const mouseVelocity = { x: 0, y: 0 };
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -268,22 +268,22 @@ function compileShader(type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  
+
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error("Shader compile error:", gl.getShaderInfoLog(shader));
     gl.deleteShader(shader);
     return null;
   }
-  
+
   return shader;
 }
 
 function initContext() {
   devicePixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-  gl = canvasRef.value.getContext("webgl", { 
-    antialias: true, 
+  gl = canvasRef.value.getContext("webgl", {
+    antialias: true,
     alpha: true,
-    premultipliedAlpha: false 
+    premultipliedAlpha: false,
   });
 
   if (!gl) {
@@ -292,7 +292,10 @@ function initContext() {
   }
 
   const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentShader = compileShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
 
   if (!vertexShader || !fragmentShader) return false;
 
@@ -317,7 +320,7 @@ function initContext() {
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-    gl.STATIC_DRAW
+    gl.STATIC_DRAW,
   );
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
@@ -349,11 +352,11 @@ function onMouseMove(event) {
   const rect = canvasRef.value.getBoundingClientRect();
   const newX = (event.clientX - rect.left) / rect.width;
   const newY = 1.0 - (event.clientY - rect.top) / rect.height;
-  
+
   // Calculate velocity for more dynamic response
   mouseVelocity.x = newX - targetMousePosition.x;
   mouseVelocity.y = newY - targetMousePosition.y;
-  
+
   targetMousePosition.x = newX;
   targetMousePosition.y = newY;
 }
@@ -364,9 +367,11 @@ function renderFrame(now) {
   const elapsed = (now - startTime) * 0.001;
 
   // Enhanced mouse movement with velocity
-  mousePosition.x += (targetMousePosition.x - mousePosition.x) * 0.15 + mouseVelocity.x * 0.3;
-  mousePosition.y += (targetMousePosition.y - mousePosition.y) * 0.15 + mouseVelocity.y * 0.3;
-  
+  mousePosition.x +=
+    (targetMousePosition.x - mousePosition.x) * 0.15 + mouseVelocity.x * 0.3;
+  mousePosition.y +=
+    (targetMousePosition.y - mousePosition.y) * 0.15 + mouseVelocity.y * 0.3;
+
   // Dampen velocity
   mouseVelocity.x *= 0.85;
   mouseVelocity.y *= 0.85;
@@ -376,12 +381,12 @@ function renderFrame(now) {
   gl.uniform2f(
     gl.getUniformLocation(program, "u_resolution"),
     canvasRef.value.width,
-    canvasRef.value.height
+    canvasRef.value.height,
   );
   gl.uniform2f(
     gl.getUniformLocation(program, "u_mouse"),
     mousePosition.x,
-    mousePosition.y
+    mousePosition.y,
   );
 
   // Draw
@@ -438,6 +443,10 @@ canvas {
 
 .holder {
   background: rgb(2, 0, 5);
-  background: radial-gradient(ellipse at center, rgba(5, 0, 10, 1) 0%, rgba(2, 0, 5, 1) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(5, 0, 10, 1) 0%,
+    rgba(2, 0, 5, 1) 100%
+  );
 }
 </style>
