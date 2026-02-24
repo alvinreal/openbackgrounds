@@ -1,9 +1,6 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 overflow-hidden">
-    <canvas
-      ref="canvasRef"
-      class="block w-full h-full pointer-events-none"
-    />
+    <canvas ref="canvasRef" class="block w-full h-full pointer-events-none" />
   </div>
 </template>
 
