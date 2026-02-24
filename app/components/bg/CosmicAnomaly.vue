@@ -3,7 +3,7 @@
     <canvas
       ref="canvasRef"
       class="block w-full h-full pointer-events-none"
-    ></canvas>
+    />
   </div>
 </template>
 

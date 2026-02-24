@@ -1,4 +1,5 @@
 <template>
+  <div>
   <section
     class="flex flex-col items-center justify-between min-h-[90vh] bg-gradient-to-b from-black to-[#1A0033] text-white pb-16 text-sm relative overflow-hidden"
   >
@@ -84,7 +85,7 @@
             :key="index"
             class="mx-14"
             v-html="logo"
-          ></div>
+          />
         </div>
       </div>
     </div>
@@ -189,6 +190,7 @@
       </div>
     </div>
   </section>
+  </div>
 </template>
 
 <script setup>
